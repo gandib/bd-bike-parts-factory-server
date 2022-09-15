@@ -45,6 +45,7 @@ async function run() {
         const userCollection = client.db('bike-parts').collection('users');
         const orderCollection = client.db('bike-parts').collection('orders');
         const paymentCollection = client.db('bike-parts').collection('payments');
+        const reviewCollection = client.db('bike-parts').collection('reviews');
 
 
 
@@ -153,6 +154,21 @@ async function run() {
 
             res.send(updatedDoc);
         });
+
+
+        app.post('/review', async (req, res) => {
+            const review = req.body;
+            const result = await reviewCollection.insertOne(review);
+            res.send({ success: true, result });
+        });
+
+        app.get('/review', async (req, res) => {
+            const query = {};
+            const cursor = reviewCollection.find(query);
+            const review = await cursor.toArray();
+            res.send(review);
+        });
+
 
     }
     finally {
