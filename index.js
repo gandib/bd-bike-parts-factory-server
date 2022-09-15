@@ -44,6 +44,7 @@ async function run() {
         const partsCollection = client.db('bike-parts').collection('parts');
         const userCollection = client.db('bike-parts').collection('users');
         const orderCollection = client.db('bike-parts').collection('orders');
+        const paymentCollection = client.db('bike-parts').collection('payments');
 
 
 
@@ -115,6 +116,42 @@ async function run() {
             const order = req.body;
             const result = await orderCollection.insertOne(order);
             res.send({ success: true, result });
+        });
+
+        app.get('/order', verifyJWT, async (req, res) => {
+            const email = req.query.email;
+            const decodedEmail = req.decoded.email;
+            if (email === decodedEmail) {
+                const query = { email: email };
+                const result = await orderCollection.find(query).toArray();
+                res.send(result);
+            }
+            else {
+                return res.status(403).send({ message: 'forbidden access' });
+            }
+        });
+
+        app.delete('/order/:id', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const result = await orderCollection.deleteOne(filter);
+            res.send(result);
+        });
+
+        app.patch('/order/:id', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const payment = req.body;
+            const filter = { _id: ObjectId(id) };
+            const updatedDoc = {
+                $set: {
+                    paid: true,
+                    transactionId: payment.transactionId
+                }
+            }
+            const result = await paymentCollection.insertOne(payment);
+            const updatedOrder = await orderCollection.updateOne(filter, updatedDoc);
+
+            res.send(updatedDoc);
         });
 
     }
