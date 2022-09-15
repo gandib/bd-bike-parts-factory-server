@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 5000;
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 
 
@@ -43,6 +43,7 @@ async function run() {
 
         const partsCollection = client.db('bike-parts').collection('parts');
         const userCollection = client.db('bike-parts').collection('users');
+        const orderCollection = client.db('bike-parts').collection('orders');
 
 
 
@@ -66,12 +67,6 @@ async function run() {
             res.send({ admin: isAdmin });
         });
 
-        app.get('/parts', async (req, res) => {
-            const query = {};
-            const cursor = partsCollection.find(query);
-            const parts = await cursor.toArray();
-            res.send(parts);
-        });
 
         app.get('/user', verifyJWT, async (req, res) => {
             const users = await userCollection.find().toArray();
@@ -88,8 +83,6 @@ async function run() {
             res.send(result);
         });
 
-
-
         app.put('/user/:email', async (req, res) => {
             const email = req.params.email;
             const user = req.body;
@@ -101,6 +94,27 @@ async function run() {
             const result = await userCollection.updateOne(filter, updateDoc, options);
             const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1d' });
             res.send({ result, token });
+        });
+
+        app.get('/parts', async (req, res) => {
+            const query = {};
+            const cursor = partsCollection.find(query);
+            const parts = await cursor.toArray();
+            res.send(parts);
+        });
+
+
+        app.get('/parts/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const results = await partsCollection.findOne(query);
+            res.send(results);
+        });
+
+        app.post('/order', async (req, res) => {
+            const order = req.body;
+            const result = await orderCollection.insertOne(order);
+            res.send({ success: true, result });
         });
 
     }
