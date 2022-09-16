@@ -113,6 +113,13 @@ async function run() {
             res.send(results);
         });
 
+        app.post('/parts', verifyJWT, verifyAdmin, async (req, res) => {
+            const parts = req.body;
+            const result = await partsCollection.insertOne(parts);
+            res.send(result);
+        });
+
+
         app.post('/order', async (req, res) => {
             const order = req.body;
             const result = await orderCollection.insertOne(order);
