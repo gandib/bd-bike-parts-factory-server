@@ -119,6 +119,13 @@ async function run() {
             res.send(result);
         });
 
+        app.delete('/parts/:id', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const result = await partsCollection.deleteOne(filter);
+            res.send(result);
+        });
+
 
         app.post('/order', async (req, res) => {
             const order = req.body;
