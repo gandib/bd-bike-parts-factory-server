@@ -169,6 +169,13 @@ async function run() {
             res.send(review);
         });
 
+        app.get('/orders', verifyJWT, async (req, res) => {
+            const query = {};
+            const cursor = orderCollection.find(query);
+            const result = await cursor.toArray();
+            res.send(result);
+        });
+
 
     }
     finally {
