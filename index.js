@@ -147,6 +147,13 @@ async function run() {
             }
         });
 
+        app.get('/order/:id', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const result = await orderCollection.findOne(filter);
+            res.send(result);
+        })
+
         app.delete('/order/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
             const filter = { _id: ObjectId(id) };
