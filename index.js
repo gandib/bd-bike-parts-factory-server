@@ -191,6 +191,19 @@ async function run() {
             res.send(updatedDoc);
         });
 
+        app.put('/orders/:id', verifyJWT, verifyAdmin, async (req, res) => {
+            const id = req.params.id;
+            const currentStatus = req.body;
+            const filter = { _id: ObjectId(id) };
+            const updatedDoc = {
+                $set: {
+                    status: currentStatus.status
+                }
+            }
+            const updatedOrder = await orderCollection.updateOne(filter, updatedDoc);
+            res.send(updatedDoc);
+        });
+
 
         app.post('/review', async (req, res) => {
             const review = req.body;
