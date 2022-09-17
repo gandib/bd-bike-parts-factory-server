@@ -46,6 +46,7 @@ async function run() {
         const orderCollection = client.db('bike-parts').collection('orders');
         const paymentCollection = client.db('bike-parts').collection('payments');
         const reviewCollection = client.db('bike-parts').collection('reviews');
+        const userprofileCollection = client.db('bike-parts').collection('userprofile');
 
 
 
@@ -189,6 +190,28 @@ async function run() {
             const result = await cursor.toArray();
             res.send(result);
         });
+
+
+        app.get('/userprofiles/:email', verifyJWT, async (req, res) => {
+            const email = req.params.email;
+            const query = { email: email };
+            const result = await userprofileCollection.find(query).toArray();
+            res.send(result);
+        });
+
+
+        app.put('/userprofile/:email', verifyJWT, async (req, res) => {
+            const email = req.params.email;
+            const userProfile = req.body;
+            const filter = { email: email };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: userProfile,
+            };
+            const result = await userprofileCollection.updateOne(filter, updateDoc, options);
+            res.send({ result });
+        });
+
 
 
     }
