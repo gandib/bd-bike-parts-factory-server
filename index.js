@@ -191,7 +191,7 @@ async function run() {
             res.send(result);
         });
 
-
+        // user profile by email
         app.get('/userprofiles/:email', verifyJWT, async (req, res) => {
             const email = req.params.email;
             const query = { email: email };
