@@ -175,7 +175,7 @@ async function run() {
         })
 
 
-        // delete heroku
+        // delete order
         app.delete('/order/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
             const filter = { _id: ObjectId(id) };
