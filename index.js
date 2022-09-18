@@ -213,6 +213,7 @@ async function run() {
             res.send({ success: true, result });
         });
 
+        //get review
         app.get('/review', async (req, res) => {
             const query = {};
             const cursor = reviewCollection.find(query);
