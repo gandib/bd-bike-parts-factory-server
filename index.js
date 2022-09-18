@@ -76,6 +76,14 @@ async function run() {
         });
 
 
+
+        // get user
+        app.get('/user', verifyJWT, async (req, res) => {
+            const users = await userCollection.find().toArray();
+            res.send(users);
+        });
+
+
         //get admin
         app.get('/admin/:email', async (req, res) => {
             const email = req.params.email;
@@ -85,11 +93,7 @@ async function run() {
         });
 
 
-        // get user
-        app.get('/user', verifyJWT, async (req, res) => {
-            const users = await userCollection.find().toArray();
-            res.send(users);
-        });
+
 
         app.put('/user/admin/:email', verifyJWT, verifyAdmin, async (req, res) => {
             const email = req.params.email;
