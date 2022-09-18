@@ -114,6 +114,7 @@ async function run() {
             res.send({ result, token });
         });
 
+        //get parts
         app.get('/parts', async (req, res) => {
             const query = {};
             const cursor = partsCollection.find(query);
